@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="hr">
+<head>
+<meta charset="UTF-8">
+<title>Zakazivač termina</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<style>
+    body { font-family: Arial, sans-serif; padding: 10px; }
+    .appointment { padding: 10px; margin: 5px 0; color: #000; border-radius: 5px; }
+    .free { background-color: #f0f0f0; }
+    form { margin-top: 20px; }
+    label, select, input { display: block; margin: 5px 0; width: 100%; }
+</style>
+</head>
+<body>
+<h1>Zakazivač termina</h1>
+
+<h2>Slobodni i zauzeti termini</h2>
+{% for hour in range(10, 20) %}
+    {% if hour in appointments %}
+        {% set appt = appointments[hour] %}
+        {% set doc = doctors[appt.doctor_id -1] %}
+        <div class="appointment" style="background-color: {{ doc.color }}">
+            {{ hour }}:00 - {{ appt.title }} ({{ doc.name }})
+        </div>
+    {% else %}
+        <div class="appointment free">{{ hour }}:00 - Slobodno</div>
+    {% endif %}
+{% endfor %}
+
+<h2>Dodaj termin</h2>
+<form method="post">
+    <label>Sat:</label>
+    <select name="hour">
+        {% for hour in range(10, 20) %}
+            {% if hour not in appointments %}
+                <option value="{{ hour }}">{{ hour }}:00</option>
+            {% endif %}
+        {% endfor %}
+    </select>
+
+    <label>Doktor:</label>
+    <select name="doctor">
+        {% for doc in doctors %}
+            <option value="{{ doc.id }}">{{ doc.name }}</option>
+        {% endfor %}
+    </select>
+
+    <label>Naziv termina:</label>
+    <input type="text" name="title" required>
+
+    <input type="submit" value="Zakazi">
+</form>
+</body>
+</html>
